@@ -9,6 +9,10 @@
 **												**
 **	Change Log:									**
 **												**
+**	Version 0.0.1a:								**
+**		-fixed bug where salvage wouldn't		**
+**			complete							**
+**												**
 **	Version 0.0.1:								**
 **		-initial								**
 **												**
@@ -60,7 +64,6 @@ end
 
 function OnSalvageResponse(args)
 	if (not enabled()) then return end
-	if (currItem == nil) then return end
 	Debug('F', "AS received OnSalvageResponse");
 	if (#args > 0) then
 		Debug('T', "Salvage success, claiming rewards");
