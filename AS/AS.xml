@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Component xmlns="http://www.red5studios.com/"
+xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+xsi:schemaLocation="http://www.red5studios.com/ ../../../schemas/component.xsd">
+	<Info
+		title="AOST"
+		author="Xiij"
+		description="Auto Salvager automatically salvages certain loots intended for salvaging."
+		url=""
+		uiVersion="1000"
+	/>
+
+	<Events>
+		<Event name="ON_COMPONENT_LOAD"			bind="OnComponentLoad"/>
+		<Event name="ON_PLAYER_READY"			bind="OnPlayerReady" />
+		<Event name="ON_LOOT_COLLECTED"			bind="OnLootCollected"/>
+		<Event name="ON_SALVAGE_RESPONSE"			bind="OnSalvageResponse" />
+	</Events>
+	<Frames>
+		<HUDFrame name="AS_MAIN" dimensions="left:20%; bottom:400; width:40; height:10">
+			<Children>
+				<Text id="AS_MAIN_TXT" dimensions="left:0; bottom:100%; width:100%; height:100%" style="font:Demi_10; halign:left; valign:top; alpha:1.0"/>
+			</Children>
+		</HUDFrame>
+	</Frames>
+</Component>
