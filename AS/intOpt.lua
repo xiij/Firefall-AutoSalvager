@@ -24,12 +24,20 @@ local ENABLE;
 local DBG_STS;
 --What level of debug is enabled
 local DBG_LVL;
---Whether half digested modules are auto salvaged
-local AS_HDM;
---Whether broken bandit gear are auto salvaged
-local AS_BBG;
 --Whether recovered chosen tech are auto salvaged
 local AS_RCT;
+--Whether broken bandit gear are auto salvaged
+local AS_BBG;
+--Whether half digested modules are auto salvaged
+local AS_HDM;
+--Whether chosen tech are auto salvaged
+local AS_CT;
+--Whether damaged cycle plating are auto salvaged
+local AS_DCP;
+--Whether damaged drive circuit board are auto salvaged
+local AS_DDCB;
+--Whether damaged ignition drive system are auto salvaged
+local AS_DIDS;
 --Whether the display frame is on or not
 local USE_FRAME;
 --How long AS waits to clear the display frame
@@ -48,9 +56,13 @@ function init_InterfaceOptions()
 	InterfaceOptions.StopGroup()
 
 	InterfaceOptions.StartGroup({id="AS", label="Auto Salvage", checkbox=true, default=false})
-	InterfaceOptions.AddCheckBox({id="AS_HDM", label="Half Digested Modules", tooltip="Whether or not Half Digested Modules are auto-salvaged.", default=true})
+	InterfaceOptions.AddCheckBox({id="AS_RCT", label="Recovered Chosen Tech", tooltip="Whether or not Recovered Chosen Techs are auto-salvaged.", default=true})
 	InterfaceOptions.AddCheckBox({id="AS_BBG", label="Broken Bandit Gear", tooltip="Whether or not Broken Bandit Gear are auto-salvaged.", default=true})
-	InterfaceOptions.AddCheckBox({id="AS_RCT", label="Recoverd Chosen Tech", tooltip="Whether or not Recoverd Chosen Techs are auto-salvaged.", default=true})
+	InterfaceOptions.AddCheckBox({id="AS_HDM", label="Half Digested Modules", tooltip="Whether or not Half Digested Modules are auto-salvaged.", default=true})
+	InterfaceOptions.AddCheckBox({id="AS_CT", label="Chosen Tech", tooltip="Whether or not Chosen Techs are auto-salvaged.", default=true})
+	InterfaceOptions.AddCheckBox({id="AS_DCP", label="Damaged Cycle Plating", tooltip="Whether or not Damaged Cycle Platings are auto-salvaged.", default=true})
+	InterfaceOptions.AddCheckBox({id="AS_DDCB", label="Damaged Drive Circuit Board", tooltip="Whether or not Damaged Drive Circuit Boards are auto-salvaged.", default=true})
+	InterfaceOptions.AddCheckBox({id="AS_DIDS", label="Damaged Ignition Drive System", tooltip="Whether or not Damaged Ignition Drives are auto-salvaged.", default=true})
 	InterfaceOptions.StopGroup()
 	InterfaceOptions.StartGroup({id="DEBUG", label="Debug Options", checkbox=true, default=false})
 		InterfaceOptions.AddSlider({id="DBG_STS_SLIDER", label="Debug Status", tooltip="This determines whether or not debugging is on.  0 is off, 1 is logs only, 2 is system messages and logs.", default=0, min=0, max=2, inc=1})
@@ -79,12 +91,20 @@ function OnMessage(args)
 			end
 		elseif args.type == "FRAME_TIMER" then
 			FRAME_TIMER = tonumber(args.data);
-		elseif args.type == "AS_HDM" then
-			AS_HDM = args.data;
-		elseif args.type == "AS_BBG" then
-			AS_BBG = args.data;
 		elseif args.type == "AS_RCT" then
 			AS_RCT = args.data;
+		elseif args.type == "AS_BBG" then
+			AS_BBG = args.data;
+		elseif args.type == "AS_HDM" then
+			AS_HDM = args.data;
+		elseif args.type == "AS_CT" then
+			AS_CT = args.data;
+		elseif args.type == "AS_DCP" then
+			AS_DCP = args.data;
+		elseif args.type == "AS_DDCB" then
+			AS_DDCB = args.data;
+		elseif args.type == "AS_DIDS" then
+			AS_DIDS = args.data;
 		elseif args.type == "DBG_STS_SLIDER" then
 			DBG_STS = args.data;
 			init_Debug(DBG_STS, DBG_LVL);
@@ -108,16 +128,32 @@ function enabled()
 	return ENABLE;
 end
 
-function AutoSalvageHDM()
-	return AS_HDM;
+function AutoSalvageRCT()
+	return AS_RCT;
 end
 
 function AutoSalvageBBG()
 	return AS_BBG;
 end
 
-function AutoSalvageRCT()
-	return AS_RCT;
+function AutoSalvageHDM()
+	return AS_HDM;
+end
+
+function AutoSalvageCT()
+	return AS_CT;
+end
+
+function AutoSalvageDCP()
+	return AS_DCP;
+end
+
+function AutoSalvageDDCB()
+	return AS_DDCB;
+end
+
+function AutoSalvageDIDS()
+	return AS_DIDS;
 end
 
 function ShowFrame()

@@ -9,6 +9,15 @@
 **												**
 **	Change Log:									**
 **												**
+**	Version 0.0.3:								**
+**		-Added new salvage items				**
+**												**
+**	Version 0.0.2:								**
+**		-fixed an issue where salvaging would	**
+**			trigger AS display frame			**
+**		-fixed an issue where AS display frame	**
+**			would clear quicker than intended.	**
+**												**
 **	Version 0.0.1a:								**
 **		-fixed bug where salvage wouldn't		**
 **			complete							**
@@ -47,6 +56,7 @@ local frameTxt;
 local currItm;
 local cb_salvage;
 local cb_clear;
+local salvageRequested;
 
 --[[**********************************************
 **					Events						**
@@ -65,6 +75,7 @@ end
 function OnSalvageResponse(args)
 	if (not enabled()) then return end
 	Debug('F', "AS received OnSalvageResponse");
+	if (not salvageRequested) then return end
 	if (#args > 0) then
 		Debug('T', "Salvage success, claiming rewards");
 		claim();
@@ -72,9 +83,6 @@ function OnSalvageResponse(args)
 			lootInfo = Game.GetItemInfoByType(loot.item_sdb_id)
 			updateInfo(lootInfo.name.." : "..loot.quantity);
 		end
-	else
-		Debug('W', "Salvage failed, retrying");
-		salvage(currItm);
 	end
 end
 
@@ -91,6 +99,18 @@ function OnLootCollected(args)
 	elseif ((tonumber(args.itemTypeId) == 86398) and (AutoSalvageHDM())) then --was half digested module
 		Debug('T', "HDM collected");
 		salvage(args.itemTypeId);
+	elseif ((tonumber(args.itemTypeId) == 86404) and (AutoSalvageCT())) then --was chosen tech
+		Debug('T', "CT collected");
+		salvage(args.itemTypeId);
+	elseif ((tonumber(args.itemTypeId) == 77418) and (AutoSalvageDCP())) then --was damaged cycle plating
+		Debug('T', "DCP collected");
+		salvage(args.itemTypeId);
+	elseif ((tonumber(args.itemTypeId) == 77419) and (AutoSalvageDDCB())) then --was damaged drive circuit board
+		Debug('T', "DDCB collected");
+		salvage(args.itemTypeId);
+	elseif ((tonumber(args.itemTypeId) == 77420) and (AutoSalvageDIDS())) then --was damaged ignition drive system
+		Debug('T', "DIDS collected");
+		salvage(args.itemTypeId);
 	end
 end
 --[[**********************************************
@@ -103,6 +123,7 @@ function init()
 	currItm = nil;
 	cb_salvage = nil;
 	cb_clear = nil;
+	salvageRequested = false;
 end
 
 function updateFrame()
@@ -118,7 +139,12 @@ function updateInfo(update)
 	end
 	timer = tonumber(getFrameTimer());
 	if (timer > 0) then
-		cb_clear = callback(clearInfo, nil, timer);
+		if (cb_clear == nil) then
+			cb_clear = callback(clearInfo, nil, timer);
+		else
+			cancel_callback(cb_clear);
+			cb_clear = callback(clearInfo, nil, timer);
+		end
 	end
 	updateFrame();
 end
@@ -128,6 +154,7 @@ function clearInfo()
 	frameTxt = "";
 	if (cb_clear ~= nil) then
 		cancel_callback(cb_clear);
+		cb_clear = nil;
 	end
 	updateFrame();
 end
@@ -139,6 +166,7 @@ function salvage(id)
 		clearInfo();
 		updateInfo("Salvaging: "..Game.GetItemInfoByType(id).name);
 		cb_salvage = callback(salvage, id, 1);
+		salvageRequested = true;
 	end
 end
 
@@ -151,6 +179,7 @@ function claim()
 		clearInfo();
 		updateInfo("Rewards from: "..Game.GetItemInfoByType(currItm).name);
 		currItm = nil;
+		salvageRequested = false;
 	end
 end
 --[[**********************************************

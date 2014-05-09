@@ -6,7 +6,7 @@ xsi:schemaLocation="http://www.red5studios.com/ ../../../schemas/component.xsd">
 		title="AOST"
 		author="Xiij"
 		description="Auto Salvager automatically salvages certain loots intended for salvaging."
-		url=""
+		url="http://forums.firefallthegame.com/community/threads/auto-salvager.3283421/"
 		uiVersion="1000"
 	/>
 
