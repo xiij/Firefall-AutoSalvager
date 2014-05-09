@@ -9,6 +9,11 @@
 **												**
 **	Change Log:									**
 **												**
+**	Version 0.0.5:								**
+**		-fixed bug where all equipment was		**
+**			being salvaged if all equipment		**
+**			based options were disabled.		**
+**												**
 **	Version 0.0.4:								**
 **		-Added session tracker					**
 **		-Added AS by quality					**
@@ -469,6 +474,10 @@ end
 
 function salvageOperation(frame, quality, prestige)
 	logic = AutoSalvageLogic();
+	if ((not AutoSalvageFrame()) and
+		(tonumber(AutoSalvageQuality()) < 0) and (tonumber(AutoSalvagePrestige()) < 0)) then
+		return false;
+	end
 	if (logic == "or") then
 		retval = false;
 		if (AutoSalvageFrame()) then
